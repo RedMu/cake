@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="SBT: com.sparetimelabs:purejavacomm:0.0.21:jar">
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/com/sparetimelabs/purejavacomm/0.0.21/purejavacomm-0.0.21.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
