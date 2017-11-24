@@ -4,9 +4,6 @@
       <root url="jar://$MAVEN_REPOSITORY$/framboos/framboos/0.0.1-SNAPSHOT/framboos-0.0.1-SNAPSHOT.jar!/" />
     </CLASSES>
     <JAVADOC />
-    <SOURCES>
-      <root url="file://$PROJECT_DIR$/../framboos" />
-      <root url="file://$PROJECT_DIR$/../framboos/src/main/java" />
-    </SOURCES>
+    <SOURCES />
   </library>
 </component>

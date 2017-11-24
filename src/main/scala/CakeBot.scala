@@ -1,32 +1,27 @@
-import scala.annotation.tailrec
 import scala.concurrent.Future
 import scalaz.effect.IO
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.io.StdIn
-
+import scala.concurrent.ExecutionContext.Implicits.global
 object CakeBot extends App {
-  loop(LidClosed())
+  loop(LidClosed).unsafePerformIO()
 
-  @tailrec
-  def loop(lidState: LidState): IO[Boolean] = {
-    val io: IO[LidState] = for {
+  def loop[A](lidState: LidState): IO[A] = for {
       switchValue <- readSwitch()
       newLidState <- IO { lidState.applySwitch(switchValue) }
       _ <- newLidState match {
-        case LidClosed() => if(newLidState != lidState) outputToSlack() else IO.ioUnit
-        case LidOpen() => IO.ioUnit
+        case LidClosed => if(newLidState != lidState) outputToSlack() else IO.ioUnit
+        case LidOpen => IO.ioUnit
       }
-    } yield newLidState
-    loop(io.unsafePerformIO())
-  }
+      a <- loop[A](newLidState)
+    } yield a
 
   def readSwitch(): IO[SwitchState] = IO {
     StdIn.readLine() match {
-      case "o" => SwitchOn()
-      case _ => SwitchOff()
+      case "o" => SwitchOn
+      case _ => SwitchOff
     }
   }
-  def outputToSlack(): IO[Future[Unit]] = IO {
+  def outputToSlack(): IO[Unit] = IO { //[Future[Unit]] = IO {
     Future {
       println("Coffee made")
     }
@@ -37,21 +32,21 @@ object CakeBot extends App {
     def negate(): LidState
     def applySwitch(switch: SwitchState): LidState = {
       switch match {
-        case SwitchOn() => negate()
-        case SwitchOff() => identity()
+        case SwitchOn => negate()
+        case SwitchOff => identity()
       }
     }
   }
-  case class LidOpen() extends LidState {
-    override def identity(): LidState = LidOpen()
-    override def negate(): LidState = LidClosed()
+  case object LidOpen extends LidState {
+    override def identity(): LidState = LidOpen
+    override def negate(): LidState = LidClosed
   }
-  case class LidClosed() extends LidState {
-    override def identity(): LidState = LidOpen()
-    override def negate(): LidState = LidOpen()
+  case object LidClosed extends LidState {
+    override def identity(): LidState = LidClosed
+    override def negate(): LidState = LidOpen
   }
 
   sealed trait SwitchState {}
-  case class SwitchOn() extends SwitchState {}
-  case class SwitchOff() extends SwitchState {}
+  case object SwitchOn extends SwitchState {}
+  case object SwitchOff extends SwitchState {}
 }
